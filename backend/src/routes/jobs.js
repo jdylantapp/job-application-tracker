@@ -1,12 +1,13 @@
 import express, { request } from 'express'
 import Job from '../models/JobApplication.js'
+import userAuth from '../middleware/userAuth.js'
 
 const jobRouter = express.Router()
 
 //GET ALL JOBS
-jobRouter.get('/', async(request, response) => {
+jobRouter.get('/', userAuth, async(request, response) => {
     try {
-        const jobs = await Job.find({}).sort({createdAt: -1})
+        const jobs = await Job.find({userId: request.user.uid}).sort({dateApplied: -1})
         response.json(jobs)
     }
     catch(error) {
@@ -15,9 +16,12 @@ jobRouter.get('/', async(request, response) => {
 })
 
 //ADD NEW JOB
-jobRouter.post('/', async(request, response) => {
+jobRouter.post('/', userAuth, async(request, response) => {
     try {
-        const job = new Job(request.body)
+        const job = new Job({
+            ...request.body,
+            userId: request.user.uid
+        })
         const savedJob = await job.save()
         response.status(201).json(savedJob)
     }
@@ -27,10 +31,13 @@ jobRouter.post('/', async(request, response) => {
 })
 
 //UPDATE A JOB
-jobRouter.put('/:id', async(request, response) => {
+jobRouter.put('/:id', userAuth, async(request, response) => {
     try {
         const updatedJob = await Job.findByIdAndUpdate(
-            request.params.id,
+            {
+                _id: request.params.id,
+                userId: request.user.uid
+            },
             request.body,
             {new: true, runValidators: true}
         )
@@ -46,11 +53,14 @@ jobRouter.put('/:id', async(request, response) => {
 })
 
 //DELETE A JOB
-jobRouter.delete('/:id', async(request, response) => {
+jobRouter.delete('/:id', userAuth, async(request, response) => {
     try {
-        const deletedJob = await Job.findByIdAndDelete(request.params.id)
+        const deletedJob = await Job.deleteOne({
+            _id: request.params.id,
+            userId: request.user.uid
+        })
 
-        if (!deletedJob) {
+        if (deletedJob.deletedCount !== 1) {
             return response.status(404).json({error: 'Job not found'})
         }
 

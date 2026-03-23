@@ -1,3 +1,11 @@
+# dotenv environment variable files
+.env
+.env.*
+!.env.example
+
+#Firebase Auth json
+firebaseServerAccountKey.js
+
 #REST test folder
 REST_requests/
 
@@ -68,10 +76,9 @@ web_modules/
 # Yarn Integrity file
 .yarn-integrity
 
-# dotenv environment variable files
-.env
-.env.*
-!.env.example
+
+
+
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
