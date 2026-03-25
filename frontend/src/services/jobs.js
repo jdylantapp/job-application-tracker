@@ -1,7 +1,7 @@
 import axios from 'axios'
 import {auth} from './firebase'
 
-const baseUrl = '/api/jobs'
+const baseUrl = `${import.meta.env.VITE_API_URL}/api/jobs`
 
 const getToken = async () => {
 

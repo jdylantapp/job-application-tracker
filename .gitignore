@@ -4,7 +4,7 @@
 !.env.example
 
 #Firebase Auth json
-firebaseServerAccountKey.js
+firebaseServerAccountKey.json
 
 #REST test folder
 REST_requests/
