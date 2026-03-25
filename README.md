@@ -1,3 +1,12 @@
+<p align="left">
+  <img src="https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB"/>
+  <img src="https://img.shields.io/badge/Node.js-339933?logo=node.js&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Express-000000?logo=express&logoColor=white"/>
+  <img src="https://img.shields.io/badge/MongoDB-47A248?logo=mongodb&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Firebase-orange?logo=firebase&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Redis-DC382D?logo=redis&logoColor=white"/>
+</p>
+
 # Job Application Tracker
 
 A full-stack web application to track job applications, manage interview stages, and visualize job search progress.
