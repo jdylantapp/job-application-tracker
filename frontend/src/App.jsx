@@ -12,11 +12,11 @@ const App = () => {
   }
 
   return (
-    <>
+    <div className="flex flex-col h-screen">
       <Toaster />
       <Navbar />
       {user ? <DashboardPage /> : <HomePage />}
-    </>
+    </div>
   )
 }
 

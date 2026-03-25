@@ -1,7 +1,7 @@
 export const JobList = ({jobs, confirmDelete, openEdit}) => {
     return (
-        <div className="max-w-9/10 mx-auto mt-10">
-            <table className="table px-10 py-15 text-xl text-center">
+        <div className="max-w-9/10 mx-auto">
+            <table className="table table-pin-rows px-10 py-10 text-xl text-center">
                 <thead className="sticky top-0 bg-base-300 z-10">
                     <tr className="text-2xl bg-base-200">
                         <th></th>

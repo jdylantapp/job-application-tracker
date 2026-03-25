@@ -5,6 +5,9 @@ import { JobList } from "../components/JobList"
 import { AddJobModal } from "../components/AddJobModal"
 import { DeleteConfirmModal } from "../components/DeleteConfirmModal"
 import {EditJobModal} from "../components/EditJobModal"
+import { StatsCard } from "../components/StatsCard"
+import { StatsGraph } from "../components/StatsGraph"
+import { Filterbar } from "../components/Filterbar"
 
 
 import jobService from "../services/jobs"
@@ -19,6 +22,9 @@ const DashboardPage =  () => {
     const [company, setCompany] = useState('')
     const [title, setTitle] = useState('')
     const [status, setStatus] = useState('Applied')
+
+    const [companyFilter, setCompanyFilter] = useState('')
+    const [statusFilter, setStatusFilter] = useState('-')
 
     const [editDate, setEditDate] = useState('')
     const [editCompany, setEditCompany] = useState('')
@@ -37,6 +43,24 @@ const DashboardPage =  () => {
         jobService.getJobs()
         .then(jobs => setJobs(jobs))
     },[])
+
+    const totalJobs = jobs.length
+    const jobApplied = jobs.filter((job) => job.status === "Applied").length
+    const jobInterviews = jobs.filter((job) => job.status === "Interview").length
+    const jobOffers = jobs.filter((job) => job.status === "Offer").length
+    const jobRejected = jobs.filter((job) => job.status === "Rejected").length
+
+    const filteredJobs = jobs.filter(job => {
+        const matchesCompany =
+        companyFilter === '' ||
+        job.company.toLowerCase().includes(companyFilter.toLowerCase())
+
+        const matchesStatus =
+        statusFilter === '-' ||
+        job.status === statusFilter
+
+        return matchesCompany && matchesStatus
+    })
 
     const handleAddJob = async (event) => {
         event.preventDefault()
@@ -131,10 +155,53 @@ const DashboardPage =  () => {
 
     return (
         <div>
+
+            {jobs.length >= 1 &&
+            <div className="flex flex-col gap-10 w-full mt-15">
+                <h3 className="text-6xl font-bold pl-10">Insights</h3>
+                <div className="flex w-11/12 mb-10">
+                    <StatsGraph
+                    appliedJobs={jobApplied}
+                    interviewJobs={jobInterviews}
+                    offerJobs={jobOffers}
+                    rejectedJobs={jobRejected}/>
+
+                    <div className="grid grid-cols-2 grid-rows-2 gap-5 mr-5 justify-center">
+
+                        <StatsCard
+                        title="Total Jobs"
+                        number={totalJobs}
+                        percentage=""/>
+
+                        <StatsCard
+                        title="Interviews"
+                        number={jobInterviews}
+                        percentage={"(" + jobInterviews/totalJobs * 100 + "%" + ")"}/>
+
+                        <StatsCard
+                        title="Rejected"
+                        number={jobRejected}
+                        percentage={"(" + jobRejected/totalJobs * 100 + "%" + ")"}/>
+
+                        <StatsCard
+                        title="Offers"
+                        number={jobOffers}
+                        percentage={"(" + jobOffers/totalJobs * 100 + "%" + ")"}/>         
+                    </div>
+                </div>
+                
+            </div>}
+        
             <div className="flex justify-between items-center w-full mt-15">
-                <h3 className="text-6xl font-bold pl-10">Your Jobs</h3>
+                <h3 className="text-6xl font-bold pl-10">Job Applications</h3>
                 <button onClick={() => setIsAddModalOpen(true)} className="btn btn-soft btn-success text-2xl mr-40 h-15 w-40">Add Job +</button>
             </div>
+
+            <Filterbar
+            company={companyFilter}
+            filterCompany={({target}) => setCompanyFilter(target.value)}
+            status={statusFilter}
+            filterStatus={({target}) => setStatusFilter(target.value)}/>
 
             {isAddModalOpen && 
             <AddJobModal 
@@ -175,7 +242,7 @@ const DashboardPage =  () => {
             handleEdit={(event)=> handleEditJob(event, jobToEdit)}/>}
             
             <JobList
-                jobs={jobs}
+                jobs={filteredJobs}
                 confirmDelete={openDeleteConfirm}
                 openEdit={openEditModal}
             />
