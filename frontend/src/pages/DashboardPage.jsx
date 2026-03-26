@@ -159,12 +159,13 @@ const DashboardPage =  () => {
     return (
         <div>
 
-            {jobs.length >= 1 &&
             <div className="flex flex-col gap-10 w-full mt-15">
                 <h3 className="text-6xl font-bold pl-10">Insights</h3>
 
                 {loading ? (
-                    <span className="loading loading-spinner loading-xl"></span>
+                    <div className="flex items-center justify-center">
+                        <span className="loading loading-spinner mt-10 loading-xl"></span>
+                    </div>
                 ) : 
                 jobs.length === 0 ? (
                     <p className="text-center text-xl mt-10">No jobs yet</p>
@@ -204,7 +205,7 @@ const DashboardPage =  () => {
 
                 
                 
-            </div>}
+            </div>
         
             <div className="flex justify-between items-center w-full mt-15">
                 <h3 className="text-6xl font-bold pl-10">Job Applications</h3>
@@ -212,7 +213,9 @@ const DashboardPage =  () => {
             </div>
 
             {loading ? (
-                    <span className="loading loading-spinner loading-xl"></span>
+                <div className="flex items-center justify-center">
+                    <span className="loading loading-spinner mt-10 loading-xl"></span>
+                </div>
                 ) : 
                 jobs.length === 0  ? (
                     <p className="text-center text-xl mt-10">No jobs yet</p>
