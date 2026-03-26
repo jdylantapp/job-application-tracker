@@ -38,10 +38,13 @@ const DashboardPage =  () => {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
     const [isEditModalOpen, setIsEditModalOpen] = useState(false)
 
+    const [loading, setLoading] = useState(true)
+
 
     useEffect(() => {
         jobService.getJobs()
         .then(jobs => setJobs(jobs))
+        .finally(() => setLoading(false))
     },[])
 
     const totalJobs = jobs.length
@@ -159,36 +162,47 @@ const DashboardPage =  () => {
             {jobs.length >= 1 &&
             <div className="flex flex-col gap-10 w-full mt-15">
                 <h3 className="text-6xl font-bold pl-10">Insights</h3>
-                <div className="flex w-11/12 mb-10">
-                    <StatsGraph
-                    appliedJobs={jobApplied}
-                    interviewJobs={jobInterviews}
-                    offerJobs={jobOffers}
-                    rejectedJobs={jobRejected}/>
 
-                    <div className="grid grid-cols-2 grid-rows-2 gap-5 mr-5 justify-center">
+                {loading ? (
+                    <span className="loading loading-spinner loading-xl"></span>
+                ) : 
+                jobs.length === 0 ? (
+                    <p className="text-center text-xl mt-10">No jobs yet</p>
+                ) :
+                (
+                    <div className="flex w-11/12 mb-10">
+                        <StatsGraph
+                        appliedJobs={jobApplied}
+                        interviewJobs={jobInterviews}
+                        offerJobs={jobOffers}
+                        rejectedJobs={jobRejected}/>
 
-                        <StatsCard
-                        title="Total Jobs"
-                        number={totalJobs}
-                        percentage=""/>
+                        <div className="grid grid-cols-2 grid-rows-2 gap-5 mr-5 justify-center">
 
-                        <StatsCard
-                        title="Interviews"
-                        number={jobInterviews}
-                        percentage={"(" + jobInterviews/totalJobs * 100 + "%" + ")"}/>
+                            <StatsCard
+                            title="Total Jobs"
+                            number={totalJobs}
+                            percentage=""/>
 
-                        <StatsCard
-                        title="Rejected"
-                        number={jobRejected}
-                        percentage={"(" + jobRejected/totalJobs * 100 + "%" + ")"}/>
+                            <StatsCard
+                            title="Interviews"
+                            number={jobInterviews}
+                            percentage={"(" + jobInterviews/totalJobs * 100 + "%" + ")"}/>
 
-                        <StatsCard
-                        title="Offers"
-                        number={jobOffers}
-                        percentage={"(" + jobOffers/totalJobs * 100 + "%" + ")"}/>         
+                            <StatsCard
+                            title="Rejected"
+                            number={jobRejected}
+                            percentage={"(" + jobRejected/totalJobs * 100 + "%" + ")"}/>
+
+                            <StatsCard
+                            title="Offers"
+                            number={jobOffers}
+                            percentage={"(" + jobOffers/totalJobs * 100 + "%" + ")"}/>         
+                        </div>
                     </div>
-                </div>
+                )}
+
+                
                 
             </div>}
         
@@ -197,55 +211,64 @@ const DashboardPage =  () => {
                 <button onClick={() => setIsAddModalOpen(true)} className="btn btn-soft btn-success text-2xl mr-40 h-15 w-40">Add Job +</button>
             </div>
 
-            <Filterbar
-            company={companyFilter}
-            filterCompany={({target}) => setCompanyFilter(target.value)}
-            status={statusFilter}
-            filterStatus={({target}) => setStatusFilter(target.value)}/>
+            {loading ? (
+                    <span className="loading loading-spinner loading-xl"></span>
+                ) : 
+                jobs.length === 0  ? (
+                    <p className="text-center text-xl mt-10">No jobs yet</p>
+                ) : 
+                (<>
+                    <Filterbar
+                    company={companyFilter}
+                    filterCompany={({target}) => setCompanyFilter(target.value)}
+                    status={statusFilter}
+                    filterStatus={({target}) => setStatusFilter(target.value)}/>
 
-            {isAddModalOpen && 
-            <AddJobModal 
-            closeModal={() => setIsAddModalOpen(false)}
-            submitForm={handleAddJob}
-            newCompany={company}
-            setNewCompany={({target}) => setCompany(target.value)}
-            newTitle={title}
-            setNewTitle={({target}) => setTitle(target.value)}
-            newStatus={status}
-            setNewStatus={({target}) => setStatus(target.value)}
-            newDate={date}
-            setNewDate={({target}) => setDate(target.value)}
-            />}
+                    {isAddModalOpen && 
+                    <AddJobModal 
+                    closeModal={() => setIsAddModalOpen(false)}
+                    submitForm={handleAddJob}
+                    newCompany={company}
+                    setNewCompany={({target}) => setCompany(target.value)}
+                    newTitle={title}
+                    setNewTitle={({target}) => setTitle(target.value)}
+                    newStatus={status}
+                    setNewStatus={({target}) => setStatus(target.value)}
+                    newDate={date}
+                    setNewDate={({target}) => setDate(target.value)}
+                    />}
 
-            {isDeleteModalOpen &&
-            <DeleteConfirmModal
-            closeModal={() => {
-                setIsDeleteModalOpen(false)
-                setJobToDelete(null)
-            }}
-            handleDelete={()=> handleDeleteJob(jobToDelete)}/>}
+                    {isDeleteModalOpen &&
+                    <DeleteConfirmModal
+                    closeModal={() => {
+                        setIsDeleteModalOpen(false)
+                        setJobToDelete(null)
+                    }}
+                    handleDelete={()=> handleDeleteJob(jobToDelete)}/>}
 
-            {isEditModalOpen &&
-            <EditJobModal
-            editCompany={editCompany}
-            setEditCompany={({target}) => setEditCompany(target.value)}
-            editTitle={editTitle}
-            setEditTitle={({target}) => setEditTitle(target.value)}
-            editStatus={editStatus}
-            setEditStatus={({target}) => setEditStatus(target.value)}
-            editDate={editDate}
-            setEditDate={({target}) => setEditDate(target.value)}
-            closeModal={() => {
-                setIsEditModalOpen(false)
-                setJobToEdit(null)
-            }}
-            handleEdit={(event)=> handleEditJob(event, jobToEdit)}/>}
-            
-            <JobList
-                jobs={filteredJobs}
-                confirmDelete={openDeleteConfirm}
-                openEdit={openEditModal}
-            />
+                    {isEditModalOpen &&
+                    <EditJobModal
+                    editCompany={editCompany}
+                    setEditCompany={({target}) => setEditCompany(target.value)}
+                    editTitle={editTitle}
+                    setEditTitle={({target}) => setEditTitle(target.value)}
+                    editStatus={editStatus}
+                    setEditStatus={({target}) => setEditStatus(target.value)}
+                    editDate={editDate}
+                    setEditDate={({target}) => setEditDate(target.value)}
+                    closeModal={() => {
+                        setIsEditModalOpen(false)
+                        setJobToEdit(null)
+                    }}
+                    handleEdit={(event)=> handleEditJob(event, jobToEdit)}/>}
+                    
+                    <JobList
+                        jobs={filteredJobs}
+                        confirmDelete={openDeleteConfirm}
+                        openEdit={openEditModal}
+                    />
+                </>
+                )}
 
         </div>
     )
